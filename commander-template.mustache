@@ -2,9 +2,6 @@
 my $in = *STDIN; #STDIN is the Socket
 my $out = *STDOUT; #STDOUT will talk to the journal
 
-$out->print("My printing reaches the outside world\n");
-$out->flush(); #proofing that we actually are talking to someone
-
 $_ = <$in>; #read just one line for this moment.
 
 $out->print("Received: ");
