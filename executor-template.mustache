@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+my $in = *STDIN; #STDIN is the Socket
+my $out = *STDOUT; #STDOUT will talk to the journal
+
+my $writerCount = 0;
+
+while($_ = <$in>) {
+    $out->print("Received: ");
+    $out->print($_);
+    $out->print("\n");
+
+    $out->flush(); 
+
+    if($_ == "0") {
+        $out->print("0 - we have a newly connected writer!\n");
+        ++$writerCount;   
+    } elsif($_ == "-1") {
+        $out->print("-1 - we have one less connected writer!\n");
+        --$writerCount;
+        if($writerCount <= 0) {
+            $out->print("Aaand, I'm gone!\n");
+            $out->flush();
+            exit 0;
+        }
+    #{{#commands}}
+    } elsif($_ == "{{index}}") {
+        $out->print("I execute code for command {{index}} ;-)\n");   
+        #{{#codeLines}}
+        system(qx{ {{{codeLine}}} });
+        #{{/codeLines}}
+    #{{/commands}}
+    } else {
+        $out->print("Command Code did not exist...\n");
+    }
+
+    $out->flush();
+}
+
